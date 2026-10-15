@@ -1,6 +1,54 @@
 # Araç Takip ve Anomali Analiz Sistemi
 
-SQL Server, Python, FastAPI ve Streamlit ile geliştirilmiş toplu taşıma araç takip projesidir.
+SQL Server, Python, FastAPI ve Streamlit ile geliştirilmiş toplu taşıma araç takip projesidir. Araçların GPS kayıtlarını ve durak geçişlerini saklar, bu verilerdeki anomalileri tespit eder, günlük rapor üretir ve sonuçları bir REST API ile dashboard üzerinden sunar.
+
+## Özellikler
+
+- **Veritabanı:** Araç, hat, durak, sefer, GPS takip, durak geçişi ve uyarı tabloları; raporlama için stored procedure'ler
+- **Anomali tespiti:** Tespit edilen sorunlar `Alerts` tablosuna kaydedilir
+  - `LOCATION_MISSING`: Belirli bir süredir konum göndermeyen araç
+  - `STOP_MISSED`: Atlanan durak
+  - `STOP_ORDER_ERROR`: Durakların yanlış sırayla geçilmesi
+  - `SPEED_WARNING`: Hız sınırının aşılması
+  - `TRIP_INCOMPLETE`: Tamamlanmamış sefer
+- **Raporlama:** Hat ve araç bazında problem grafikleri, saatlik yoğunluk analizi ve `daily_report.xlsx` Excel raporu
+- **REST API (FastAPI):** Araç, hat performansı, uyarı ve özet verileri için endpoint'ler
+- **Dashboard (Streamlit):** Araç geçmişi, problemli araçlar, hat performansı ve son uyarılar
+
+## Kullanılan Teknolojiler
+
+- Microsoft SQL Server 2022 (Docker)
+- Python 3.10+ (pyodbc, pandas, matplotlib, openpyxl)
+- FastAPI
+- Streamlit
+
+## Proje Yapısı
+
+```text
+.
+├── 01_database.sql           # Veritabanı ve tabloların oluşturulması
+├── 02_sample_data.py         # Örnek test verilerinin üretilmesi
+├── 02_anomaly_data.py        # Anomali senaryoları için test verileri
+├── 03_queries.sql            # Kontrol sorguları
+├── 04_stored_procedures.sql  # Raporlama stored procedure'leri
+├── 05_anomaly_service.py     # Anomali tespit servisi
+├── 06_reporting.py           # Grafik ve Excel raporu üretimi
+├── 07_api/main.py            # FastAPI uygulaması
+├── 08_dashboard/app.py       # Streamlit dashboard
+├── requirements.txt
+└── .env.example
+```
+
+## API Endpoint'leri
+
+| Metot | Endpoint | Açıklama |
+|-------|----------|----------|
+| GET | `/` | API durum kontrolü |
+| GET | `/vehicles` | Araç listesi |
+| GET | `/vehicles/{plate}/history` | Plakaya göre araç hareket geçmişi |
+| GET | `/routes/{routeCode}/performance` | Hat performansı |
+| GET | `/alerts` | Uyarılar |
+| GET | `/summary` | Günlük özet |
 
 ## Kurulum
 
@@ -43,7 +91,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 python -m pip install --upgrade pip
-python -m pip install pyodbc pandas matplotlib openpyxl "fastapi[standard]" streamlit
+python -m pip install -r requirements.txt
 ```
 
 ### 3. SQL parolasını tanımlama
@@ -55,6 +103,13 @@ export SQL_PASSWORD='<GÜÇLÜ_SQL_PAROLASI>'
 ```
 
 Gerçek parola README'ye veya Python dosyalarına yazılmamalıdır. Yeni terminal açıldığında değişkeni tekrar tanımlayın.
+
+Alternatif olarak `.env.example` dosyasını `.env` olarak kopyalayıp parolayı oraya yazabilir ve terminalde yükleyebilirsiniz (`.env` git'e eklenmez):
+
+```bash
+cp .env.example .env
+set -a; source .env; set +a
+```
 
 ### 4. Veritabanını oluşturma
 
