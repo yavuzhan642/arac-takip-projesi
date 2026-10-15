@@ -1,0 +1,16 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Ortam değişkenleri / gizli bilgiler
+.env
+.env.*
+
+# Üretilen çıktılar
+*.xlsx
+*.png
+
+# macOS
+.DS_Store
