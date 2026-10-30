@@ -54,14 +54,7 @@ SQL Server, Python, FastAPI ve Streamlit ile geliştirilmiş toplu taşıma ara�
 
 ### 1. SQL Server'ı başlatma
 
-Mevcut Docker container'ını başlatın:
-
-```bash
-docker start sqlserver
-docker ps
-```
-
-Yeni bir container gerekiyorsa:
+SQL Server'ı Docker'da çalıştırın:
 
 ```bash
 export SQL_PASSWORD='<GÜÇLÜ_SQL_PAROLASI>'
@@ -71,6 +64,12 @@ docker run --name sqlserver \
   -e "MSSQL_SA_PASSWORD=${SQL_PASSWORD}" \
   -p 1433:1433 \
   -d mcr.microsoft.com/mssql/server:2022-latest
+```
+
+Container daha önce oluşturulduysa yeniden başlatmak için:
+
+```bash
+docker start sqlserver
 ```
 
 Bağlantı bilgileri:
